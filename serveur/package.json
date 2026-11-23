@@ -1,0 +1,23 @@
+{
+  "name": "clinique-appels-serveur",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "node --watch --env-file=.env src/serveur.js",
+    "start": "node --env-file=.env src/serveur.js",
+    "bd:init": "node --env-file=.env scripts/initialiser-bd.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "express-mysql-session": "^3.0.3",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.14.0",
+    "socket.io": "^4.8.1",
+    "zod": "^3.25.0"
+  }
+}
