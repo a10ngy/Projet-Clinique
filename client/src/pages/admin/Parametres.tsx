@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { api, ErreurApi } from '../../api/client';
 import type { Categorie, Groupe, Statut } from '../../api/types';
-import { Alerte, BadgeStatut, Champ, Modale } from '../../composants/Interface';
+import { Icone } from '../../composants/Icones';
+import { Alerte, BadgeStatut, Champ, EntetePage, Modale } from '../../composants/Interface';
 import { useReferences } from '../../contexte/References';
 import { GROUPES } from '../../utils/format';
 
@@ -14,11 +15,11 @@ export function Parametres() {
 
   return (
     <>
-      <h1>Statuts et motifs</h1>
+      <EntetePage surtitre="Administration" titre="Statuts et motifs" description="Les listes proposées dans les formulaires et utilisées par le tableau de bord." />
       <section className="panneau">
-        <div className="titre-page">
+        <div className="panneau-entete">
           <h2>Statuts de suivi</h2>
-          <button type="button" className="bouton" onClick={() => setEdition({ type: 'statuts' })}>+ Ajouter un statut</button>
+          <button type="button" className="bouton bouton-secondaire" onClick={() => setEdition({ type: 'statuts' })}><Icone nom="plus" taille={16} /> Ajouter un statut</button>
         </div>
         <p className="discret">L’étape sert au tableau de bord (en attente, à rappeler, en cours, terminé).</p>
         <ul className="liste-parametres">
@@ -33,9 +34,9 @@ export function Parametres() {
       </section>
 
       <section className="panneau">
-        <div className="titre-page">
+        <div className="panneau-entete">
           <h2>Motifs d’appel</h2>
-          <button type="button" className="bouton" onClick={() => setEdition({ type: 'categories' })}>+ Ajouter un motif</button>
+          <button type="button" className="bouton bouton-secondaire" onClick={() => setEdition({ type: 'categories' })}><Icone nom="plus" taille={16} /> Ajouter un motif</button>
         </div>
         <ul className="liste-parametres">
           {categories.map((c) => (

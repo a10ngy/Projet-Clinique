@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../api/client';
-import { Alerte } from '../../composants/Interface';
+import { Alerte, EntetePage } from '../../composants/Interface';
 import { formaterDate } from '../../utils/format';
 
 interface Entree {
@@ -31,8 +31,7 @@ export function Journal() {
 
   return (
     <>
-      <h1>Journal des accès</h1>
-      <p className="discret">Les 300 derniers événements de connexion et d’administration.</p>
+      <EntetePage surtitre="Administration" titre="Journal des accès" description="Les 300 derniers événements de connexion et d’administration." />
       {erreur && <Alerte type="erreur">{erreur}</Alerte>}
       <div className="tableau-conteneur">
         <table className="tableau">

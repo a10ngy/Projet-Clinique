@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { api, ErreurApi } from '../../api/client';
 import type { Employe, Role } from '../../api/types';
-import { Alerte, Champ, Modale } from '../../composants/Interface';
+import { Icone } from '../../composants/Icones';
+import { Alerte, Champ, EntetePage, Modale } from '../../composants/Interface';
 import { useAuth } from '../../contexte/Authentification';
 import { useReferences } from '../../contexte/References';
 import { Lien } from '../../routeur';
@@ -30,10 +31,9 @@ export function Employes() {
 
   return (
     <>
-      <div className="titre-page">
-        <h1>Employés</h1>
-        <button type="button" className="bouton" onClick={() => setEnEdition('nouveau')}>+ Ajouter un employé</button>
-      </div>
+      <EntetePage surtitre="Administration" titre="Employés" description="Comptes de l’équipe, rôles et accès à l’application.">
+        <button type="button" className="bouton" onClick={() => setEnEdition('nouveau')}><Icone nom="plus" taille={18} /> Ajouter un employé</button>
+      </EntetePage>
       {message && <Alerte type="erreur">{message}</Alerte>}
       <div className="tableau-conteneur">
         <table className="tableau">
@@ -51,7 +51,7 @@ export function Employes() {
                 <td data-etiquette="Rôle">{e.role_libelle}</td>
                 <td data-etiquette="Suivis ouverts"><Lien vers={`/appels?responsable=${e.id}`}>{e.suivis_ouverts} — voir ses appels</Lien></td>
                 <td data-etiquette="Dernière connexion">{formaterDate(e.derniere_connexion)}</td>
-                <td data-etiquette="Compte">{e.actif ? 'Actif' : 'Désactivé'}</td>
+                <td data-etiquette="Compte"><span className={`etat ${e.actif ? 'etat-actif' : ''}`}>{e.actif ? 'Actif' : 'Désactivé'}</span></td>
                 <td data-etiquette="Actions">
                   <div className="cellule-actions">
                     <button type="button" className="bouton bouton-secondaire" onClick={() => setEnEdition(e)}>Modifier</button>

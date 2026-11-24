@@ -32,7 +32,7 @@ export default function App() {
   const { utilisateur, chargement, peut } = useAuth();
   const { chemin } = useRoute();
 
-  if (chargement) return <p className="vide">Chargement…</p>;
+  if (chargement) return <div className="chargement-page" role="status"><span className="spinner" />Chargement…</div>;
   if (!utilisateur) return <Connexion />; // non connecté : toujours l'écran de connexion
 
   let contenu: ReactNode = <Alerte type="info">Cette page n’existe pas.</Alerte>;

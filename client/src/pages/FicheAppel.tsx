@@ -2,7 +2,8 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { api, ErreurApi } from '../api/client';
 import type { FicheAppel as Fiche } from '../api/types';
 import { FormulaireAppel } from '../composants/FormulaireAppel';
-import { Alerte, BadgeStatut, Champ } from '../composants/Interface';
+import { Avatar, Icone } from '../composants/Icones';
+import { Alerte, BadgeStatut, Champ, EtatVide } from '../composants/Interface';
 import { useAuth } from '../contexte/Authentification';
 import { useReferences } from '../contexte/References';
 import { Lien } from '../routeur';
@@ -58,7 +59,7 @@ export function FicheAppel({ id }: { id: number }) {
   }
 
   if (erreur && !fiche) return <Alerte type="erreur">{erreur}</Alerte>;
-  if (!fiche || !utilisateur) return <p className="vide">Chargement…</p>;
+  if (!fiche || !utilisateur) return <div className="chargement-page chargement-bloc" role="status"><span className="spinner" />Chargement…</div>;
 
   const modifiable = peutModifierAppel(utilisateur, fiche);
   const changerChamp = (champ: 'statut_id' | 'responsable_id', valeur: string) =>
@@ -92,14 +93,19 @@ export function FicheAppel({ id }: { id: number }) {
 
   return (
     <>
-      <Lien vers="/appels" className="retour">← Retour aux appels</Lien>
-      <div className="titre-page">
-        <div>
-          <h1>{fiche.nom_appelant ?? 'Nom inconnu'}</h1>
-          <p className="sous-titre">
-            <a href={`tel:${fiche.telephone}`}>{formaterTelephone(fiche.telephone)}</a> · reçu le {formaterDate(fiche.recu_le)} ·{' '}
-            <BadgeStatut libelle={fiche.statut} couleur={fiche.statut_couleur} />
-          </p>
+      <Lien vers="/appels" className="retour"><Icone nom="retour" taille={16} /> Retour aux appels</Lien>
+      <div className="titre-page fiche-entete">
+        <div className="fiche-identite">
+          <Avatar nom={fiche.nom_appelant} />
+          <div className="titre-page-texte">
+            <span className="surtitre">Appel n° {fiche.id}</span>
+            <h1>{fiche.nom_appelant ?? 'Nom inconnu'}</h1>
+            <p className="sous-titre fiche-meta">
+              <a href={`tel:${fiche.telephone}`} className="fiche-telephone"><Icone nom="telephone" taille={14} />{formaterTelephone(fiche.telephone)}</a>
+              <span><Icone nom="horloge" taille={14} />reçu le {formaterDate(fiche.recu_le)}</span>
+              <BadgeStatut libelle={fiche.statut} couleur={fiche.statut_couleur} />
+            </p>
+          </div>
         </div>
         <div className="actions">
           {peut('appels:commenter') && !fiche.archive_le && (fiche.rappel_par_id === utilisateur.id ? (
@@ -107,14 +113,14 @@ export function FicheAppel({ id }: { id: number }) {
               Je ne rappelle plus
             </button>
           ) : (
-            <button type="button" className="bouton" onClick={prendreRappel}>Je rappelle</button>
+            <button type="button" className="bouton" onClick={prendreRappel}><Icone nom="telephone" taille={16} /> Je rappelle</button>
           ))}
           {modifiable && !fiche.archive_le && (
-            <button type="button" className="bouton bouton-secondaire" onClick={() => setEdition(true)}>Modifier</button>
+            <button type="button" className="bouton bouton-secondaire" onClick={() => setEdition(true)}><Icone nom="crayon" taille={16} /> Modifier</button>
           )}
           {peut('appels:archiver') && (fiche.archive_le || fiche.statut_groupe === 'termine') && (
             <button type="button" className="bouton bouton-secondaire" onClick={() => agir(() => api(`/appels/${id}/${fiche.archive_le ? 'desarchiver' : 'archiver'}`, 'POST'))}>
-              {fiche.archive_le ? 'Sortir des archives' : 'Archiver'}
+              <Icone nom="archive" taille={16} /> {fiche.archive_le ? 'Sortir des archives' : 'Archiver'}
             </button>
           )}
         </div>
@@ -187,7 +193,7 @@ export function FicheAppel({ id }: { id: number }) {
                 <time className="discret">{formaterDate(s.cree_le)}</time>
               </li>
             ))}
-            {!fiche.suivis.length && <li className="vide">Aucune action pour l’instant.</li>}
+            {!fiche.suivis.length && <li className="chronologie-vide"><EtatVide icone="rappel">Aucune action pour l’instant.</EtatVide></li>}
           </ul>
         </section>
 
@@ -215,7 +221,7 @@ export function FicheAppel({ id }: { id: number }) {
                 <time className="discret">{formaterDate(n.cree_le)}</time>
               </li>
             ))}
-            {!fiche.notes.length && <li className="vide">Aucune note pour l’instant.</li>}
+            {!fiche.notes.length && <li className="chronologie-vide"><EtatVide icone="crayon">Aucune note pour l’instant.</EtatVide></li>}
           </ul>
         </section>
 

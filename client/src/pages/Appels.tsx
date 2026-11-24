@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { api, versRequete } from '../api/client';
 import type { PageAppels } from '../api/types';
 import { FormulaireAppel } from '../composants/FormulaireAppel';
-import { Alerte, Champ } from '../composants/Interface';
+import { Icone } from '../composants/Icones';
+import { Alerte, Champ, EntetePage } from '../composants/Interface';
 import { TableauAppels } from '../composants/TableauAppels';
 import { useAuth } from '../contexte/Authentification';
 import { useReferences } from '../contexte/References';
@@ -71,20 +72,29 @@ export function Appels({ mesSuivis = false }: { mesSuivis?: boolean }) {
 
   return (
     <>
-      <div className="titre-page">
-        <h1>{mesSuivis ? 'Mes suivis' : 'Appels'}</h1>
+      <EntetePage
+        surtitre={mesSuivis ? 'Mon travail' : 'Registre'}
+        titre={mesSuivis ? 'Mes suivis' : 'Appels'}
+        description={mesSuivis
+          ? 'Les appels dont vous êtes responsable et qui ne sont pas terminés.'
+          : 'Tous les appels et messages vocaux reçus par la clinique.'}
+      >
         {peut('appels:creer') && (
-          <button type="button" className="bouton" onClick={() => setCreation(true)}>+ Nouvel appel</button>
+          <button type="button" className="bouton" onClick={() => setCreation(true)}>
+            <Icone nom="plus" taille={18} /> Nouvel appel
+          </button>
         )}
-      </div>
-      {mesSuivis && <p className="discret">Les appels dont vous êtes responsable et qui ne sont pas terminés.</p>}
+      </EntetePage>
 
       <form className="filtres" role="search" onSubmit={(e) => e.preventDefault()}>
         <Champ etiquette="Rechercher">
-          <input type="search" placeholder="Nom ou numéro" {...valeur('recherche')} />
+          <span className="champ-avec-icone">
+            <Icone nom="recherche" taille={16} />
+            <input type="search" placeholder="Nom ou numéro" {...valeur('recherche')} />
+          </span>
         </Champ>
-        <button type="button" className="bouton bouton-secondaire bouton-filtres" onClick={() => setPlusDeFiltres(!plusDeFiltres)}>
-          {plusDeFiltres ? 'Moins de filtres' : 'Plus de filtres'}
+        <button type="button" className="bouton bouton-secondaire bouton-filtres" onClick={() => setPlusDeFiltres(!plusDeFiltres)} aria-expanded={plusDeFiltres}>
+          <Icone nom="filtre" taille={15} /> {plusDeFiltres ? 'Moins de filtres' : 'Plus de filtres'}
         </button>
         {/* Sur téléphone, ces filtres sont cachés tant qu'on ne les demande pas */}
         <div className={`filtres-avances ${plusDeFiltres ? 'ouvert' : ''}`}>
@@ -131,8 +141,8 @@ export function Appels({ mesSuivis = false }: { mesSuivis?: boolean }) {
             <input type="checkbox" checked={filtres.archives === '1'} onChange={(e) => changer({ archives: e.target.checked ? '1' : '' })} />
             Archives
           </label>
-          <button type="button" className="bouton bouton-secondaire" onClick={() => naviguer(chemin, true)}>
-            Effacer les filtres
+          <button type="button" className="bouton bouton-fantome" onClick={() => naviguer(chemin, true)}>
+            <Icone nom="fermer" taille={15} /> Effacer les filtres
           </button>
         </div>
       </form>
