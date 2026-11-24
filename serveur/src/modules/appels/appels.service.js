@@ -2,7 +2,7 @@ import { bd } from '../../config/bd.js';
 import { peutModifierAppel } from '../../securite/permissions.js';
 import { diffuser, notifierUtilisateur } from '../../temps-reel/socket.js';
 import { erreurHttp } from '../../utils/http.js';
-import { calculerChangements, construireFiltres } from './appels.requetes.js';
+import { calculerChangements, construireFiltres, statutChange } from './appels.requetes.js';
 
 const SELECT_APPEL = `
   SELECT a.id, a.nom_appelant, a.telephone, a.recu_le, a.description, a.langue, a.consigne_confidentialite,
@@ -86,7 +86,7 @@ export async function modifierAppel(id, { version, ...changements }, utilisateur
   const colonnes = CHAMPS_MODIFIABLES.filter((c) => changements[c] !== undefined);
   if (!colonnes.length) return avant;
   // Un nouveau statut termine aussi le « Je rappelle » en cours
-  const finRappel = colonnes.includes('statut_id') ? ', rappel_par_id = NULL, rappel_depuis = NULL' : '';
+  const finRappel = statutChange(avant, changements) ? ', rappel_par_id = NULL, rappel_depuis = NULL' : '';
   const [resultat] = await bd.query(
     `UPDATE appels SET ${colonnes.map((c) => `${c} = ?`).join(', ')}${finRappel},
        version = version + 1, modifie_par_id = ? WHERE id = ? AND version = ?`,

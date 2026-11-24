@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { schemaAppel, schemaFiltres, schemaModification } from '../src/modules/appels/appels.schemas.js';
-import { calculerChangements, construireFiltres } from '../src/modules/appels/appels.requetes.js';
+import { calculerChangements, construireFiltres, statutChange } from '../src/modules/appels/appels.requetes.js';
 
 const appelValide = {
   nom_appelant: '  Julie Test ',
@@ -72,4 +72,11 @@ test('historique : libellés lisibles et textes longs masqués', () => {
     { champ: 'Statut', ancienne: 'Nouveau message', nouvelle: 'À rappeler' },
     { champ: 'Description', ancienne: '(texte précédent)', nouvelle: '(texte modifié)' },
   ]);
+});
+
+test('« Je rappelle » : seul un nouveau statut y met fin, pas une simple modification', () => {
+  const avant = { statut_id: 2 };
+  assert.equal(statutChange(avant, { statut_id: 3 }), true);
+  assert.equal(statutChange(avant, { statut_id: 2, description: 'Texte corrigé' }), false);
+  assert.equal(statutChange(avant, { description: 'Texte corrigé' }), false);
 });

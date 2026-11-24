@@ -64,6 +64,12 @@ const CHAMPS_HISTORIQUE = [
 ];
 
 // Compare deux versions d'un appel (avec libellés) et liste ce qui a changé
+// Seul un statut réellement différent termine le « Je rappelle » en cours :
+// le formulaire « Modifier » renvoie toujours le statut, même inchangé.
+export function statutChange(avant, changements) {
+  return changements.statut_id !== undefined && changements.statut_id !== avant.statut_id;
+}
+
 export function calculerChangements(avant, apres) {
   return CHAMPS_HISTORIQUE.filter(([cle]) => (avant[cle] ?? null) !== (apres[cle] ?? null)).map(([cle, champ, masque]) => ({
     champ,
